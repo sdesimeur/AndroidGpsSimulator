@@ -73,7 +73,7 @@ public class MapMockGps extends Activity implements OnItemSelectedListener {
     }
     public CrossView crossImg;
     private ArrayAdapter serversListAdapter;
-    private static final String MAPFILE = "GpsFictionProjects/mapsforge/jeu.map";
+    private static final String MAPFILE = "GpsFictionProjects/mapsforge/local.map";
     private static final double LATITUDE = 49.59266;
     private static final double LONGITUDE = 3.65649;
     //protected ViewGroup rootView;
