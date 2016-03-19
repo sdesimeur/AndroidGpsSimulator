@@ -4,7 +4,9 @@ You have to install MockGpsProvider apk on the android's device which have to re
 
 You have to choise between MapMockGps or MapMockGpsPHP:
 *MapMockGps
-You have to install it on an android's device which have to create and send fake GPS position.
+Create some directories named /sdesimeur/mapsforge/ in SD card of the android's device  which have to create and send fake GPS position, download an OSM map with .map extension (for example: http://download.mapsforge.org/maps/europe/france/picardie.map) and copy it as /sdesimeur/mapsforge/local.map
+Then you have to install MapMockGps on this android's device.
+
 *MapMockGpsPHP
 You have to install it on a Web PHP Server.
 

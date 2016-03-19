@@ -66,14 +66,12 @@ public class MapMockGps extends Activity implements OnItemSelectedListener {
         SERVERS = new ArrayList<String>() {{
             add("http://127.0.0.1");
             add("http://192.168.43.1");
-            add("http://192.168.3.150/~sam/AndroidDevel");
-            add("http://192.168.3.195");
             add("");
         }};
     }
     public CrossView crossImg;
     private ArrayAdapter serversListAdapter;
-    private static final String MAPFILE = "GpsFictionProjects/mapsforge/local.map";
+    private static final String MAPFILE = "sdesimeur/mapsforge/local.map";
     private static final double LATITUDE = 49.59266;
     private static final double LONGITUDE = 3.65649;
     //protected ViewGroup rootView;
