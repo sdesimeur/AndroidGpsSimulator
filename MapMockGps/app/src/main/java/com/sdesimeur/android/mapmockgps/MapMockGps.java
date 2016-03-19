@@ -1,11 +1,24 @@
 package com.sdesimeur.android.mapmockgps;
 
-import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mapsforge.core.graphics.Paint;
 import org.mapsforge.core.graphics.Style;
@@ -13,7 +26,6 @@ import org.mapsforge.core.model.LatLong;
 import org.mapsforge.core.model.Point;
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory;
 import org.mapsforge.map.android.util.AndroidUtil;
-import org.mapsforge.map.android.view.MapView;
 import org.mapsforge.map.layer.cache.TileCache;
 import org.mapsforge.map.layer.overlay.Polyline;
 import org.mapsforge.map.layer.renderer.TileRendererLayer;
@@ -21,43 +33,12 @@ import org.mapsforge.map.reader.MapDataStore;
 import org.mapsforge.map.reader.MapFile;
 import org.mapsforge.map.rendertheme.InternalRenderTheme;
 
-import android.app.Activity;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import android.os.Environment;
-
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MapMockGps extends Activity implements OnItemSelectedListener {
@@ -234,10 +215,10 @@ public class MapMockGps extends Activity implements OnItemSelectedListener {
         AndroidGraphicFactory.clearResourceMemoryCache();
 	}
     private File getMapFile() {
-        File file = new File(Environment.getExternalStorageDirectory(), MapMockGps.MAPFILE);
+        File file = null;
         boolean greaterOrEqKitkat = Build.VERSION.SDK_INT >= 19;
         if (greaterOrEqKitkat) {
-        		file = new File("/mnt/media_rw/sdcard1/", MapMockGps.MAPFILE);
+        		file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), MapMockGps.MAPFILE);
                 //file = new File(Environment.getExternalStoragePublicDirectory(""), MapMockGps.MAPFILE);
         	} else {
         		file = new File(Environment.getExternalStorageDirectory(), MapMockGps.MAPFILE);
