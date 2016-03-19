@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/cryptodev/sam/git/android_studio/workspace/MockGpsProvider/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">AMock GPS Provider</string>
+    <string name="buttonQuit">Quit</string>
+    <string name="buttonStart">Start</string>
+    <string name="buttonStop">Stop</string>
+    <string name="hello">Disable the GPS receiver on this device to use the Mock GPS Provider.</string>
+    <string name="local_service_label">MockGps Running...</string>
+    <string name="local_service_started">MockGps Started</string>
+    <string name="local_service_stopped">MockGps Stopped</string>
+</resources>

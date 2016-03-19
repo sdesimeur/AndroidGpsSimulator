@@ -1,0 +1,33 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 22
+    buildToolsVersion '23.0.2'
+    defaultConfig {
+        applicationId "com.sdesimeur.android.mapmockgps"
+        minSdkVersion 10
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    productFlavors {
+    }
+    sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/renderthemes'] } }
+}
+
+dependencies {
+    compile files('libs/androidsvg-1.2.1.jar')
+    compile files('libs/mapsforge-core.jar')
+    compile files('libs/mapsforge-map-android.jar')
+    compile files('libs/mapsforge-map-reader.jar')
+    compile files('libs/mapsforge-map.jar')
+}

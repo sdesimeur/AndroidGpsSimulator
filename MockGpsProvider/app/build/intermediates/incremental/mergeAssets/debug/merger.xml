@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="22.2.0"><source path="/cryptodev/sam/git/android_studio/workspace/MockGpsProvider/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/assets"/></dataSet><dataSet config="main"><source path="/cryptodev/sam/git/android_studio/workspace/MockGpsProvider/app/src/main/assets"/></dataSet><dataSet config="debug"><source path="/cryptodev/sam/git/android_studio/workspace/MockGpsProvider/app/src/debug/assets"/></dataSet></merger>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:padding="0dp"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:id="@+id/servers"/>
+        <Button
+            android:padding="0dp"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:onClick="delServer"
+            android:id="@+id/del_server"
+            android:layout_weight="1"
+            android:text="del"/>
+    </LinearLayout>
+    <LinearLayout
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:padding="0dp"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:id="@+id/new_server"/>
+        <Button
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="addServer"
+            android:id="@+id/add_server"
+            android:layout_weight="1"
+            android:text="add"/>
+    </LinearLayout>
+    <LinearLayout
+        android:padding="20dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/button_start"
+            android:onClick="startServer"
+            android:padding="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="@string/buttonStart" />
+        <Button
+            android:id="@+id/button_stop"
+            android:onClick="stopServer"
+            android:padding="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="@string/buttonStop" />
+    </LinearLayout>
+
+</LinearLayout>
+<!-- From: file:/cryptodev/sam/git/android_studio/workspace/MockGpsProvider/app/src/main/res/layout/main.xml -->
