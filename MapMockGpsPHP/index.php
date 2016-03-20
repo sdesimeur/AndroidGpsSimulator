@@ -1,3 +1,11 @@
+<?php
+// sign up to "https://www.mapbox.com/studio/signin/?path=%2Fstudio%2Faccount%2Fapps"
+// Change:
+$myId="your.mapbox.project.id";
+$myAccessToken="your.mapbox.public.access.token";
+//
+//include "./config.php";
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,13 +26,27 @@ var pos=L.latLng(49.59266, 3.65649);
 var map=L.map('map').setView(pos, 13);
 var line=L.polyline([pos]);
 line.addTo(map);
-L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IjZjNmRjNzk3ZmE2MTcwOTEwMGY0MzU3YjUzOWFmNWZhIn0.Y8bhBaUMqFiPrDRW9hieoQ', {
+
+var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+	osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+map.addLayer(osm);
+
+
+
+/*L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+	attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	maxZoom: 18,
+	id: '<?php echo $myId; ?>',
+	accessToken: '<?php echo $myAccessToken; ?>'
+	}).addTo(map);*/
+/*L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6IjZjNmRjNzk3ZmE2MTcwOTEwMGY0MzU3YjUzOWFmNWZhIn0.Y8bhBaUMqFiPrDRW9hieoQ', {
 	maxZoom: 18,
 	attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 		'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 		'Imagery © <a href="http://mapbox.com">Mapbox</a>',
 		id: 'mapbox.streets'
-}).addTo(map);
+}).addTo(map);*/
 var marker = L.marker(pos);
 marker.addTo(map);
 /*	.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
