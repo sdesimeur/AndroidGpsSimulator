@@ -1,13 +1,11 @@
 package com.sdesimeur.android.mockgps;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,18 +16,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.ServerSocket;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -38,15 +32,17 @@ import java.util.regex.Pattern;
 public class MockGpsService extends Service implements LocationListener {
 	private LocationManager locationManager;
 	private Location newLocation = null;
-	//private static final int LONGTIMEOUT4HTMLREQUEST = 10000;
+	private static final int LONGTIMEOUT4SEND = 10000;
 	private static final int SHORTTIMEOUT4HTMLREQUEST = 2000;
 	//private static final int WAIT = 900;
 	private String pattern = null;
+	private double angle=0;
 	private Pattern compiledPattern = null;
-	private double lat=0;
-	private double lon=0;
+	private double lat=49.59266;
+	private double lon=3.65649;
 	//private int nbretrywithcancel;
 	private boolean mustBeAborted;
+	private boolean allreadySend=false;
 	//private boolean mustWait = true;
 	//private static final String MOCKGPSTHREAD = "MockGpsThread";
 	private String serverString = MockGpsProviderActivity.SERVERS.get(0);
@@ -54,6 +50,7 @@ public class MockGpsService extends Service implements LocationListener {
 	private final IBinder mBinder = new LocalBinder();
 	//private boolean isInterrupted = false;
 	private Timer timer = null;
+	private Timer timer1 = null;
 
 	public class LocalBinder extends Binder {
 		MockGpsService getService() {
@@ -69,23 +66,36 @@ public class MockGpsService extends Service implements LocationListener {
     		StrictMode.setThreadPolicy(policy);
 		}
 	}
-
+@TargetApi(17)
 	private void startProvider() {
 		if (timer != null) stopProvider();
 		locationManager.addTestProvider(
-				LocationManager.GPS_PROVIDER,
-				"requiresNetwork" == "",
-				"requiresSatellite" == "",
-				"requiresCell" == "",
-				"hasMonetaryCost" == "",
-				"supportsAltitude" == "",
-				"supportsSpeed" == "",
-				"supportsBearing" == "",
-				Criteria.POWER_HIGH,
-				Criteria.ACCURACY_FINE
-		);
+                LocationManager.GPS_PROVIDER,
+                "requiresNetwork" == "",
+                "requiresSatellite" == "",
+                "requiresCell" == "",
+                "hasMonetaryCost" == "",
+                "supportsAltitude" == "",
+                "supportsSpeed" == "",
+                "supportsBearing" == "",
+                Criteria.POWER_HIGH,
+                Criteria.ACCURACY_FINE
+        );
 		locationManager.setTestProviderStatus(LocationManager.GPS_PROVIDER, LocationProvider.AVAILABLE, null, System.currentTimeMillis());
 		locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+		newLocation = new Location(LocationManager.GPS_PROVIDER);
+        newLocation.setLatitude(lat);
+        newLocation.setLongitude(lon);
+        newLocation.setAltitude(100);
+        newLocation.setBearing((float) angle);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            newLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+        }
+        newLocation.setSpeed(50);
+        newLocation.setAccuracy(5);
+        newLocation.setTime(System.currentTimeMillis());
+		locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, newLocation);
+
 			mustBeAborted = false;
 			TimerTask task = new TimerTask() {
 				@Override
@@ -115,28 +125,27 @@ public class MockGpsService extends Service implements LocationListener {
 							lat = Double.parseDouble(m.group(1));
 							lon = Double.parseDouble(m.group(2));
 							if ((newLocation == null) || (lat != newLocation.getLatitude()) || (lon != newLocation.getLongitude())) {
-								double a;
 								if (newLocation != null) {
 									double x = lat - newLocation.getLatitude();
 									double y = lon - newLocation.getLongitude();
-									a = Math.toDegrees(Math.atan2(y, x));
+									angle = Math.toDegrees(Math.atan2(y, x));
 								} else {
-									a = 0;
+									angle = 0;
 								}
 								newLocation = new Location(LocationManager.GPS_PROVIDER);
-								newLocation.setLatitude(lat);
-								newLocation.setLongitude(lon);
+                                newLocation.setLatitude(lat);
+                                newLocation.setLongitude(lon);
 								newLocation.setAltitude(100);
-								newLocation.setBearing((float) a);
-								if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-									newLocation.setElapsedRealtimeNanos(0);
-								}
-								newLocation.setSpeed(50);
-								newLocation.setAccuracy(5);
-								//newLocation.setProvider(LocationManager.GPS_PROVIDER);
+                                newLocation.setBearing((float) angle);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                    newLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+                                }
+                                newLocation.setSpeed(50);
+                                newLocation.setAccuracy(5);
 								newLocation.setTime(System.currentTimeMillis());
+								//newLocation.setProvider(LocationManager.GPS_PROVIDER);
 								//newLocation.setExtras(null);
-								Method method;
+								/*Method method;
 								try {
 									method = Location.class.getMethod("makeComplete", new Class[0]);
 									if (method != null)
@@ -150,7 +159,7 @@ public class MockGpsService extends Service implements LocationListener {
 								} catch (NoSuchMethodException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
-								}
+								}*/
 								locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, newLocation);
 							}
 						}
@@ -159,6 +168,25 @@ public class MockGpsService extends Service implements LocationListener {
 			};
 			timer = new Timer();
 			timer.scheduleAtFixedRate(task,0, MockGpsService.SHORTTIMEOUT4HTMLREQUEST);
+			timer1 = new Timer();
+			TimerTask task1 = new TimerTask() {
+				@Override
+				public void run() {
+					newLocation = new Location(LocationManager.GPS_PROVIDER);
+                    newLocation.setLatitude(lat);
+                    newLocation.setLongitude(lon);
+                    newLocation.setAltitude(100);
+                    newLocation.setBearing((float) angle);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        newLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+                    }
+                    newLocation.setSpeed(50);
+                    newLocation.setAccuracy(5);
+                    newLocation.setTime(System.currentTimeMillis());
+					locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, newLocation);
+				}
+			};
+			timer1.scheduleAtFixedRate(task1,0,MockGpsService.LONGTIMEOUT4SEND);
 	}
 
 	private void stopProvider() {
