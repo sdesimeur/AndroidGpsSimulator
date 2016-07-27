@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -54,6 +56,7 @@ public class MockGpsService extends Service implements LocationListener {
 	//private boolean isInterrupted = false;
 	private Timer timer = null;
 	//private Timer timer1 = null;
+	private SharedPreferences settings;
 
 	public class LocalBinder extends Binder {
 		MockGpsService getService() {
@@ -181,6 +184,7 @@ public class MockGpsService extends Service implements LocationListener {
 	@Override
 	public void onCreate() {
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 			if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -236,6 +240,16 @@ public class MockGpsService extends Service implements LocationListener {
 		return Service.START_STICKY;
 	}
 
+	private void saveServersSettings () {
+		SharedPreferences.Editor editor = this.settings.edit();
+		editor.clear();
+		editor.putString("last", this.serverString);
+		editor.commit();
+	}
+	private void loadServersSettings () {
+		String lastServer = this.settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
+		this.serverString=lastServer;
+	}
 
 	@Override
     public void onDestroy() {

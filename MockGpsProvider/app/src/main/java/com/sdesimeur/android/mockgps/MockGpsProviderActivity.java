@@ -25,11 +25,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -38,10 +36,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MockGpsProviderActivity extends Activity implements AdapterView.OnItemSelectedListener {
@@ -76,7 +72,8 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
         this.buttonStart = (Button) this.findViewById(R.id.button_start);
         this.serversSpinner = (Spinner) findViewById(R.id.servers);
         //Création d'une liste d'élément à mettre dans le Spinner(pour l'exemple)
-        this.settings = this.getPreferences(Context.MODE_PRIVATE);
+        //this.settings = this.getPreferences(Context.MODE_PRIVATE);
+        this.settings = PreferenceManager.getDefaultSharedPreferences(this);
         this.loadServersSettings();
 		/*Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
                 un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
