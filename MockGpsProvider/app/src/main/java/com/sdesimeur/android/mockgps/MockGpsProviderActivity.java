@@ -64,7 +64,7 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
     //private ViewGroup crossView = null;
     private SharedPreferences settings;
     private String serverString = "127.0.0.1";
-	
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -87,6 +87,7 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
     }
     public void onStart() {
         super.onStart();
+        this.startServer(null);
         this.isOnStartNewServer = true;
         this.serversSpinner.setSelection(this.serversListAdapter.getPosition(this.serverString));
         this.serversSpinner.setOnItemSelectedListener(this);
@@ -113,11 +114,17 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
     public void onBackPressed() {
     	super.onBackPressed();
     }
-    
-    
-    public void startServer(View view) {
+
+    public void changeServer(View view) {
         Intent myIntent = new Intent(this, MockGpsService.class);
         myIntent.putExtra("ServerName",this.serverString);
+        myIntent.setAction(Constants.ACTION.CHANGESERVER_ACTION);
+        this.startService(myIntent);
+    }
+
+    public void startServer(View view) {
+        Intent myIntent = new Intent(this, MockGpsService.class);
+        //myIntent.putExtra("ServerName",this.serverString);
         myIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
         this.startService(myIntent);
     }
@@ -129,12 +136,12 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
 
     private void setNewServer (String server) {
         this.newServer.setText(server, TextView.BufferType.EDITABLE);
-        if (! (this.isOnStartNewServer)) {
-            this.stopServer(null);
-            this.isOnStartNewServer = false;
-        }
+        //if (! (this.isOnStartNewServer)) {
+        //    this.stopServer(null);
+        //    this.isOnStartNewServer = false;
+        //}
         this.serverString=server;
-        this.startServer(null);
+        changeServer(null);
         //this.serversSpinner.setSelection(this.serversListAdapter.getPosition(server));
         this.buttonStart.requestFocus();
         InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
@@ -158,7 +165,7 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
         if (!(newServerString.isEmpty())) {
             this.serversListAdapter.add(newServerString);
             //this.initServersListAdapter();
-            //this.setNewServer(newServerString);
+            this.setNewServer(newServerString);
             this.serversSpinner.setSelection(this.serversListAdapter.getPosition(newServerString));
         }
         //this.newServer.setText("",null);

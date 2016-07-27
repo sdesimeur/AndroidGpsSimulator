@@ -203,15 +203,18 @@ public class MockGpsService extends Service implements LocationListener {
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+		if (intent.getAction().equals(Constants.ACTION.CHANGESERVER_ACTION)) {
+			String server = intent.getStringExtra("ServerName");
+			serverString = server;
+			saveServersSettings();
+		} else if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
 			Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
             Intent notificationIntent = new Intent(this, MockGpsProviderActivity.class);
             notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            String server = intent.getStringExtra("ServerName");
-            this.serverString = server;
-            this.startProvider ();
+			loadServersSettings();
+            startProvider ();
 			Notification notification = null;
 			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 				notification = new Notification.Builder(this)
@@ -249,6 +252,7 @@ public class MockGpsService extends Service implements LocationListener {
 	private void loadServersSettings () {
 		String lastServer = this.settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
 		this.serverString=lastServer;
+		Toast.makeText(this, lastServer, Toast.LENGTH_LONG).show();
 	}
 
 	@Override

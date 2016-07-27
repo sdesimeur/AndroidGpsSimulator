@@ -10,6 +10,7 @@ public class Constants {
   public static String STOP_ACTION = "com.sdesimeur.android.mockgps.action.stop";
   public static String STARTFOREGROUND_ACTION = "com.sdesimeur.android.mockgps.action.startforeground";
   public static String STOPFOREGROUND_ACTION = "com.sdesimeur.android.mockgps.action.stopforeground";
+  public static String CHANGESERVER_ACTION = "com.sdesimeur.android.mockgps.action.changeserver";
  }
 
  public interface NOTIFICATION_ID {
