@@ -206,7 +206,7 @@ public class MockGpsService extends Service implements LocationListener {
 		if (intent.getAction().equals(Constants.ACTION.CHANGESERVER_ACTION)) {
 			String server = intent.getStringExtra("ServerName");
 			serverString = server;
-			Toast.makeText(this, serverString, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Change to: " + serverString, Toast.LENGTH_SHORT).show();
 			saveServersSettings();
 		} else if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
 			Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
@@ -215,7 +215,7 @@ public class MockGpsService extends Service implements LocationListener {
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			loadServersSettings();
-			Toast.makeText(this, serverString, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Set to: " + serverString, Toast.LENGTH_SHORT).show();
             startProvider ();
 			Notification notification = null;
 			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
