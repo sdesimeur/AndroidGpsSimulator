@@ -206,6 +206,7 @@ public class MockGpsService extends Service implements LocationListener {
 		if (intent.getAction().equals(Constants.ACTION.CHANGESERVER_ACTION)) {
 			String server = intent.getStringExtra("ServerName");
 			serverString = server;
+			Toast.makeText(this, serverString, Toast.LENGTH_LONG).show();
 			saveServersSettings();
 		} else if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
 			Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
@@ -214,6 +215,7 @@ public class MockGpsService extends Service implements LocationListener {
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			loadServersSettings();
+			Toast.makeText(this, serverString, Toast.LENGTH_LONG).show();
             startProvider ();
 			Notification notification = null;
 			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -236,7 +238,7 @@ public class MockGpsService extends Service implements LocationListener {
             this.startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
                 Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
-                this.stopProvider();
+                this.stopProvider();PreferenceManager.getDefaultSharedPreferences(this);
                 this.stopForeground(true);
                 this.stopSelf();
         }
@@ -252,7 +254,6 @@ public class MockGpsService extends Service implements LocationListener {
 	private void loadServersSettings () {
 		String lastServer = this.settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
 		this.serverString=lastServer;
-		Toast.makeText(this, lastServer, Toast.LENGTH_LONG).show();
 	}
 
 	@Override
