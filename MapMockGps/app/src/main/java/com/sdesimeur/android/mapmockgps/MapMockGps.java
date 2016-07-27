@@ -4,9 +4,8 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.StrictMode;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -106,6 +105,8 @@ public class MapMockGps extends Activity implements OnItemSelectedListener {
     @Override
     public void onCreate(Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -216,13 +217,14 @@ public class MapMockGps extends Activity implements OnItemSelectedListener {
 	}
     private File getMapFile() {
         File file = null;
-        boolean greaterOrEqKitkat = Build.VERSION.SDK_INT >= 19;
-        if (greaterOrEqKitkat) {
-        		file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), MapMockGps.MAPFILE);
+        //boolean greaterOrEqKitkat = Build.VERSION.SDK_INT >= 19;
+        //if (greaterOrEqKitkat) {
+        // 		file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), MapMockGps.MAPFILE);
                 //file = new File(Environment.getExternalStoragePublicDirectory(""), MapMockGps.MAPFILE);
-        	} else {
-        		file = new File(Environment.getExternalStorageDirectory(), MapMockGps.MAPFILE);
-        	}
+        file = new File("/sdcard/", MapMockGps.MAPFILE);
+        //	} else {
+        //		file = new File(Environment.getExternalStorageDirectory(), MapMockGps.MAPFILE);
+        //	}
         return file;
     }
 
