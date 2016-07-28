@@ -62,9 +62,8 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
     private ArrayList <String> serversList = new ArrayList<String>();
     private Spinner serversSpinner;
     //private ViewGroup crossView = null;
-    private SharedPreferences settings;
     private String serverString = "127.0.0.1";
-
+    private String serverSelected = "";
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -73,7 +72,6 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
         this.serversSpinner = (Spinner) findViewById(R.id.servers);
         //Création d'une liste d'élément à mettre dans le Spinner(pour l'exemple)
         //this.settings = this.getPreferences(Context.MODE_PRIVATE);
-        this.settings = PreferenceManager.getDefaultSharedPreferences(this);
         this.loadServersSettings();
 		/*Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
                 un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
@@ -130,6 +128,7 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
     }
     public void stopServer(View view) {
         Intent myIntent = new Intent(this, MockGpsService.class);
+        myIntent.putExtra("ReallyStop",Constants.ACTION.REALLY_STOP);
         myIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
         this.startService(myIntent);
     }
@@ -146,7 +145,7 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
         this.buttonStart.requestFocus();
         InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(this.newServer.getWindowToken(), 0);
-        this.saveServersSettings();
+        saveServersSettings();
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -172,13 +171,16 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
         //this.newServer.clearComposingText();
     }
     public void delServer (View view) {
-        this.serversListAdapter.remove(this.serversSpinner.getSelectedItem());
+        serversListAdapter.remove(this.serversSpinner.getSelectedItem());
         //this.initServersListAdapter();
         //this.setNewServer(this.serversListAdapter.getItem(0).toString());
-        this.serversSpinner.setSelection(0);
+        serversSpinner.setSelection(0);
+        this.setNewServer(this.serversListAdapter.getItem(0).toString());
+        saveServersSettings();
     }
     private void saveServersSettings () {
-        SharedPreferences.Editor editor = this.settings.edit();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = settings.edit();
         editor.clear();
         for (int i = 0; i < (this.serversListAdapter.getCount()); i++) {
             editor.putString("server" + i, this.serversListAdapter.getItem(i).toString());
@@ -188,14 +190,15 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
     }
     private void loadServersSettings () {
         this.serversList = new ArrayList<String>();
-        String lastServer = this.settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String lastServer = settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
         this.serverString=lastServer;
         int i = 0;
-        String tmp = this.settings.getString ("server"+i,"####");
+        String tmp = settings.getString ("server"+i,"####");
         while ("####" != tmp) {
             this.serversList.add(tmp);
             i++;
-            tmp = this.settings.getString ("server"+i,"####");
+            tmp = settings.getString ("server"+i,"####");
         }
         if (this.serversList.size()==0)
             this.serversList.addAll(MockGpsProviderActivity.SERVERS);

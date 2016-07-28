@@ -56,7 +56,6 @@ public class MockGpsService extends Service implements LocationListener {
 	//private boolean isInterrupted = false;
 	private Timer timer = null;
 	//private Timer timer1 = null;
-	private SharedPreferences settings;
 
 	public class LocalBinder extends Binder {
 		MockGpsService getService() {
@@ -184,7 +183,6 @@ public class MockGpsService extends Service implements LocationListener {
 	@Override
 	public void onCreate() {
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
 			if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -207,7 +205,7 @@ public class MockGpsService extends Service implements LocationListener {
 			String server = intent.getStringExtra("ServerName");
 			serverString = server;
 			Toast.makeText(this, "Change to: " + serverString, Toast.LENGTH_SHORT).show();
-			saveServersSettings();
+			//saveServersSettings();
 		} else if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
 			Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
             Intent notificationIntent = new Intent(this, MockGpsProviderActivity.class);
@@ -237,23 +235,29 @@ public class MockGpsService extends Service implements LocationListener {
             }
             this.startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
-                Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
-                this.stopProvider();PreferenceManager.getDefaultSharedPreferences(this);
-                this.stopForeground(true);
-                this.stopSelf();
+			    String reallyStop = intent.getStringExtra("ReallyStop");
+                if (reallyStop == Constants.ACTION.REALLY_STOP) {
+                    Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
+                    this.stopProvider();
+                    PreferenceManager.getDefaultSharedPreferences(this);
+                    this.stopForeground(true);
+                    this.stopSelf();
+                }
         }
-		return Service.START_STICKY;
+//		return Service.START_STICKY;
+		return Service.START_REDELIVER_INTENT;
 	}
 
 	private void saveServersSettings () {
-		SharedPreferences.Editor editor = this.settings.edit();
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = settings.edit();
 		editor.clear();
 		editor.putString("last", this.serverString);
 		editor.commit();
 	}
 	private void loadServersSettings () {
-		String lastServer = this.settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
-		this.serverString=lastServer;
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		this.serverString=settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
 	}
 
 	@Override

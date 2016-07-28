@@ -51,7 +51,7 @@
         android:layout_gravity="center_vertical|center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
+<!--        <Button
             android:id="@+id/button_change"
             android:onClick="changeServer"
             android:padding="20dp"
@@ -59,6 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
             android:text="@string/buttonChange" />
+-->
         <Button
             android:id="@+id/button_start"
             android:onClick="startServer"

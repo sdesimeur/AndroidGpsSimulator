@@ -6,6 +6,7 @@ package com.sdesimeur.android.mockgps;
 public class Constants {
  public interface ACTION {
   public static String MAIN_ACTION = "com.sdesimeur.android.mockgps.action.main";
+  public static String REALLY_STOP = "dsgkljn23434(wdsQSFDSDS45";
   public static String START_ACTION = "com.sdesimeur.android.mockgps.action.start";
   public static String STOP_ACTION = "com.sdesimeur.android.mockgps.action.stop";
   public static String STARTFOREGROUND_ACTION = "com.sdesimeur.android.mockgps.action.startforeground";
