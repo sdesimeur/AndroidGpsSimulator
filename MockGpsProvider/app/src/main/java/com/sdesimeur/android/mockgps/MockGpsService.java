@@ -55,6 +55,7 @@ public class MockGpsService extends Service implements LocationListener {
 	private final IBinder mBinder = new LocalBinder();
 	//private boolean isInterrupted = false;
 	private Timer timer = null;
+	private boolean checkBox = false;
 	//private Timer timer1 = null;
 
 	public class LocalBinder extends Binder {
@@ -204,16 +205,19 @@ public class MockGpsService extends Service implements LocationListener {
 		if (intent.getAction().equals(Constants.ACTION.CHANGESERVER_ACTION)) {
 			String server = intent.getStringExtra("ServerName");
 			serverString = server;
-			Toast.makeText(this, "Change to: " + serverString, Toast.LENGTH_SHORT).show();
+			if (checkBox) Toast.makeText(this, "Change to: " + serverString, Toast.LENGTH_SHORT).show();
 			//saveServersSettings();
+		} else if (intent.getAction().equals(Constants.ACTION.CHANGECHK_ACTION)) {
+			checkBox = (intent.getBooleanExtra("CheckBox",false));
+
 		} else if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-			Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
+			if (checkBox) Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
             Intent notificationIntent = new Intent(this, MockGpsProviderActivity.class);
             notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			loadServersSettings();
-			Toast.makeText(this, "Set to: " + serverString, Toast.LENGTH_SHORT).show();
+			if (checkBox) Toast.makeText(this, "Set to: " + serverString, Toast.LENGTH_SHORT).show();
             startProvider ();
 			Notification notification = null;
 			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -236,8 +240,8 @@ public class MockGpsService extends Service implements LocationListener {
             this.startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
 			    String reallyStop = intent.getStringExtra("ReallyStop");
-                if (reallyStop == Constants.ACTION.REALLY_STOP) {
-                    Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
+                if (reallyStop.equals(Constants.ACTION.REALLY_STOP)) {
+                    if (checkBox) Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
                     this.stopProvider();
                     PreferenceManager.getDefaultSharedPreferences(this);
                     this.stopForeground(true);
@@ -271,7 +275,7 @@ public class MockGpsService extends Service implements LocationListener {
     }
 	@Override
 	public void onLocationChanged(Location location) {
-		Toast.makeText(this.getBaseContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+		if (checkBox) Toast.makeText(this.getBaseContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

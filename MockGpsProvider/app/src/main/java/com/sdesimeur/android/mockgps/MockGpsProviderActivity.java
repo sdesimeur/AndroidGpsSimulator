@@ -33,6 +33,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -117,6 +118,13 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
         Intent myIntent = new Intent(this, MockGpsService.class);
         myIntent.putExtra("ServerName",this.serverString);
         myIntent.setAction(Constants.ACTION.CHANGESERVER_ACTION);
+        this.startService(myIntent);
+    }
+
+    public void onCheck(View view) {
+        Intent myIntent = new Intent(this, MockGpsService.class);
+        myIntent.putExtra("CheckBox",((CheckBox)findViewById(R.id.checkBox)).isChecked());
+        myIntent.setAction(Constants.ACTION.CHANGECHK_ACTION);
         this.startService(myIntent);
     }
 
