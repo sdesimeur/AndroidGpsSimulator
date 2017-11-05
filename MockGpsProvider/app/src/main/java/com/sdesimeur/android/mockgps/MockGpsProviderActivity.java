@@ -49,8 +49,10 @@ public class MockGpsProviderActivity extends Activity implements AdapterView.OnI
     public static final List<String> SERVERS;
     static {
         SERVERS = new ArrayList<String>() {{
-            add("http://127.0.0.1");
-            add("http://192.168.43.1");
+            add("http://127.0.0.1/");
+            add("http://192.168.43.1/");
+            add("http://server.sdesimeur.org/~sam/MapMockGpsPHP/");
+            add("http://192.168.4.150/~sam/MapMockGpsPHP/");
             add("");
         }};
     }
