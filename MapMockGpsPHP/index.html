@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Leaflet Quick Start Guide Example</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
+<link rel="stylesheet" href="perso.css" />
+</head>
+<body>
+<!--<script type="text/javascript" src="./jquery-1.7.2.min.js"></script>-->
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
+ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><BR>
+<div id="map" style="width: 800px; height: 600px"></div>
+<script>
+document.getElementById('serverstring').value = window.location.href;
+// var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
+//var myGpsPos = [35608193 / 10000000, 487255027 / 10000000]; // QG
+//var myGpsPos = [59111980 / 10000000,45306444 / 10000000]; // <wpt lat="45.306444" lon="5.911198"> coupe icare
+//var myGpsPos = [60700000 / 10000000, 484086111 / 10000000]; // Client Pb
+//var myGpsPos = [-12167030 / 10000000, 445900820 / 10000000]; // Dune du Pilat
+var myGpsPos = [179831380 / 10000000, 1221878030 / 10000000]; // Les Philippines
+//var myGpsPos = [80000000 / 10000000, -300000000 / 10000000]; // Ocean
+mapboxgl.accessToken = 'pk.eyJ1Ijoic2Rlc2ltZXVyIiwiYSI6ImNpbTBqa2UyNzAwazN1am00aXAzd2xtM3cifQ.bEyYhAJQrLRWFaIG6iFbCw';
+var map = new mapboxgl.Map({
+	container: 'map',
+	style: 'mapbox://styles/mapbox/outdoors-v9',
+	zoom: 15,
+	transition: {"duration": 0, "delay": 0},
+	fadeDuration: 0,
+	center: myGpsPos
+});
+
+map.addControl(new mapboxgl.NavigationControl());
+map.addControl(new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken
+}));
+var iconData = {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                            "type": "Point",
+                            "coordinates": myGpsPos
+                }
+};
+
+var icon = {
+            "id": "para",
+            "type": "symbol",
+            "source": {
+                "type": "geojson",
+                "data": iconData
+            },
+            "layout": {
+                "icon-image": "paraIcon",
+                "icon-anchor": "bottom",
+                "icon-size": 1
+            }
+        }
+
+var lineData = {
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                    ]
+                }
+            };
+var line={
+        "id": "route",
+        "type": "line",
+        "source": {
+            "type": "geojson",
+            "data": lineData
+        },
+        "layout": {
+            "line-join": "round",
+            "line-cap": "round"
+        },
+        "paint": {
+            "line-color": "#F00",
+            "line-width": 2
+	}};
+var h = 540;
+var a = 0;
+var vh = 10; // 5 a 15
+var vv = 0; // -5 a 5
+var da = 0; // par seconde
+var dvv = 0; // par seconde
+var dvh = 0; // par seconde
+
+var dt = 200;
+
+function moveTo (gpsPos){
+	map.panTo(gpsPos);
+	iconData.geometry.coordinates=[gpsPos.lng,gpsPos.lat];
+	map.getSource('para').setData(iconData);
+	lineData.geometry.coordinates.push([gpsPos.lng,gpsPos.lat]);
+	map.getSource('route').setData(lineData);
+	var server = document.getElementById('serverstring').value;
+	var url = server +  "/tracking/put.php?lat=" + Math.round(gpsPos.lat*10000000) + "&lon=" + Math.round(gpsPos.lng*10000000) + "&alt=" + h;
+	if (window.XMLHttpRequest) {
+		requete = new XMLHttpRequest();
+	} else if (window.ActiveXObject) {
+		requete = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	requete.open("GET", url, true);
+	requete.send(null);
+}
+
+function onMapClick(e) {
+	a = Math.atan((e.lngLat.lng-myGpsPos[0])/(e.lngLat.lat-myGpsPos[1]))*180/Math.PI;
+	if ((e.lngLat.lat-myGpsPos[1])<0) a = 180 - a;
+	myGpsPos = [e.lngLat.lng, e.lngLat.lat];
+	moveTo(e.lngLat);
+}
+function changeDeltaAngle () {
+	da = (Math.random()*2-1);
+	var tm = window.setInterval(changeAngle, dt);
+	window.setTimeout(function (){
+		window.clearInterval(tm);
+	}, Math.round((Math.random()*180)*dt));
+}
+
+function changeAngle() {
+	a += da;
+	while (a < 0) a += 360;
+	a %= 360;
+}
+
+function changeDeltaVV () {
+	dvv = (Math.random()*6-3);
+//	if (dvv < -5) dvv = -5;
+//	if (dvv > 5) dvv = 5;
+}
+
+function changeVV () {
+	vv += dvv;
+	if (vv > 5) vh = 5;
+	if (vv < -5) vh = -5;
+}
+
+function changeAlt () {
+	h += vv * dt / 1000;
+	if (h > 2500) h = 2500;
+	if (h < 500) h = 500;
+}
+
+function changeGpsPos () {
+	dvh += (Math.random()*2-1);
+	if (dvh < -5) dvh = -5;
+	if (dvh > 5) dvh = 5;
+
+	vh += dvh * dt / 1000;
+	if (vh > 15) vh = 15;
+	if (vh < 5) vh = 5;
+
+	var dd = vh * dt / 1000;
+	var ad = a * Math.PI / 180;
+	var dx = dd * Math.sin(ad);
+	var dy = dd * Math.cos(ad);
+	
+	myGpsPos[1] += (dy / 111500);
+	myGpsPos[0] += (dx / 75000);
+	
+	moveTo (new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
+}
+
+
+map.on('load', function () {
+	map.loadImage('para_icon.png', function (error, image){
+		if (error) throw error;
+		map.addImage("paraIcon", image);
+		map.addLayer(icon);
+		moveTo(new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
+		//map.getSource('para').setData(iconData);
+	});
+	map.addLayer(line);
+	//map.getSource('route').setData(lineData);
+	window.setInterval(changeGpsPos, dt);
+	window.setInterval(changeDeltaAngle, 20000+Math.round(Math.random()*40000));
+	window.setInterval(changeDeltaVV, dt);
+	window.setInterval(changeVV, dt);
+	window.setInterval(changeAlt, dt);
+	
+});
+map.on('click', onMapClick);
+document.getElementById('map').style.cursor = '';
+</script>
+</body>
+</html>
+
