@@ -17,7 +17,7 @@ $myAccessToken="your.mapbox.public.access.token";
 </head>
 <body>
 <script type="text/javascript" src="./jquery-1.7.2.min.js"></script>
-ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><BR>
+ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=40>&nbsp;&nbsp;&nbsp;<input type="button" id="clear" value="Clear" onclick="clearMap()"><BR>
 <div id="map" style="width: 800px; height: 600px"></div>
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 <script>
@@ -63,15 +63,16 @@ L.polygon([
 */
 //var popup = L.popup();
 function onMapClick(e) {
-	map.panTo(e.latlng);
-	line.addLatLng(e.latlng);
-	marker.setLatLng(e.latlng);
+    pos=e.latlng;
+	map.panTo(pos);
+	line.addLatLng(pos);
+	marker.setLatLng(pos);
 /*	popup
-		.setLatLng(e.latlng)
-		.setContent("You clicked the map at " + e.latlng.toString())
+		.setLatLng(pos)
+		.setContent("You clicked the map at " + pos.toString())
 		.openOn(map);*/
 	var server = $('#serverstring').val();
-	var url = server +  "/tracking/put.php?lat=" + e.latlng.lat + "&lon=" + e.latlng.lng;
+	var url = server +  "/tracking/put.php?lat=" + pos.lat + "&lon=" + pos.lng;
 	var donnees = document.getElementById("donnees");
 	if (window.XMLHttpRequest) {
 		requete = new XMLHttpRequest();
@@ -81,6 +82,10 @@ function onMapClick(e) {
 	requete.open("GET", url, true);
 //	requete.onreadystatechange = majIHM;
 	requete.send(null);
+}
+function clearMap () {
+    line.setLatLngs({});
+	line.addLatLng(pos);
 }
 map.on('click', onMapClick);
 document.getElementById('map').style.cursor = ''

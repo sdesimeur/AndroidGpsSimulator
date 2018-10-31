@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -53,6 +55,7 @@ public class MockGpsService extends Service implements LocationListener {
 	private final IBinder mBinder = new LocalBinder();
 	//private boolean isInterrupted = false;
 	private Timer timer = null;
+	private boolean checkBox = false;
 	//private Timer timer1 = null;
 
 	public class LocalBinder extends Binder {
@@ -199,15 +202,23 @@ public class MockGpsService extends Service implements LocationListener {
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-			Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
+		if (intent.getAction().equals(Constants.ACTION.CHANGESERVER_ACTION)) {
+			String server = intent.getStringExtra("ServerName");
+			serverString = server;
+			if (checkBox) Toast.makeText(this, "Change to: " + serverString, Toast.LENGTH_SHORT).show();
+			//saveServersSettings();
+		} else if (intent.getAction().equals(Constants.ACTION.CHANGECHK_ACTION)) {
+			checkBox = (intent.getBooleanExtra("CheckBox",false));
+
+		} else if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+			if (checkBox) Toast.makeText(this, R.string.local_service_started, Toast.LENGTH_SHORT).show();
             Intent notificationIntent = new Intent(this, MockGpsProviderActivity.class);
             notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            String server = intent.getStringExtra("ServerName");
-            this.serverString = server;
-            this.startProvider ();
+			loadServersSettings();
+			if (checkBox) Toast.makeText(this, "Set to: " + serverString, Toast.LENGTH_SHORT).show();
+            startProvider ();
 			Notification notification = null;
 			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 				notification = new Notification.Builder(this)
@@ -228,14 +239,30 @@ public class MockGpsService extends Service implements LocationListener {
             }
             this.startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
-                Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
-                this.stopProvider();
-                this.stopForeground(true);
-                this.stopSelf();
+			    String reallyStop = intent.getStringExtra("ReallyStop");
+                if (reallyStop.equals(Constants.ACTION.REALLY_STOP)) {
+                    if (checkBox) Toast.makeText(this, R.string.local_service_stopped, Toast.LENGTH_SHORT).show();
+                    this.stopProvider();
+                    PreferenceManager.getDefaultSharedPreferences(this);
+                    this.stopForeground(true);
+                    this.stopSelf();
+                }
         }
-		return Service.START_STICKY;
+//		return Service.START_STICKY;
+		return Service.START_REDELIVER_INTENT;
 	}
 
+	private void saveServersSettings () {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.clear();
+		editor.putString("last", this.serverString);
+		editor.commit();
+	}
+	private void loadServersSettings () {
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		this.serverString=settings.getString("last",MockGpsProviderActivity.SERVERS.get(0));
+	}
 
 	@Override
     public void onDestroy() {
@@ -248,7 +275,7 @@ public class MockGpsService extends Service implements LocationListener {
     }
 	@Override
 	public void onLocationChanged(Location location) {
-		Toast.makeText(this.getBaseContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+		if (checkBox) Toast.makeText(this.getBaseContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
 	}
 
 	@Override

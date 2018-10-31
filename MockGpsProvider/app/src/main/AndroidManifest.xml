@@ -35,7 +35,10 @@
 
         <service
             android:name="com.sdesimeur.android.mockgps.MockGpsService"
-            android:exported="true" >
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:persistent="true"
+            android:enabled="true">
 <!--            android:enabled="false"-->
 <!--            android:persistent="true"-->
 <!--            android:exported="true" > -->

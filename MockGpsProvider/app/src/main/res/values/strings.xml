@@ -2,9 +2,11 @@
 <resources>
     <string name="hello">Disable the GPS receiver on this device to use the Mock GPS Provider.</string>
     <string name="app_name">AMock GPS Provider</string>
+    <string name="buttonChange">Change</string>
     <string name="buttonStop">Stop</string>
     <string name="buttonStart">Start</string>
     <string name="buttonQuit">Quit</string>
+    <string name="chkToast">Afficher les toasts</string>
     <string name="local_service_started">MockGps Started</string>
     <string name="local_service_stopped">MockGps Stopped</string>
     <string name="local_service_label">MockGps Running...</string>
