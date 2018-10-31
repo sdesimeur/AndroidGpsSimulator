@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.sdesimeur.android.mockgps"
         minSdkVersion 19
@@ -14,13 +14,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     productFlavors {
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:26.0.0-alpha1'
+    implementation 'com.android.support:support-v4:26.1.0'
 }
