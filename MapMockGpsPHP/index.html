@@ -16,12 +16,12 @@ ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><
 <div id="map" style="width: 800px; height: 600px"></div>
 <script>
 document.getElementById('serverstring').value = window.location.href;
-// var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
+var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
 //var myGpsPos = [35608193 / 10000000, 487255027 / 10000000]; // QG
 //var myGpsPos = [59111980 / 10000000,45306444 / 10000000]; // <wpt lat="45.306444" lon="5.911198"> coupe icare
 //var myGpsPos = [60700000 / 10000000, 484086111 / 10000000]; // Client Pb
 //var myGpsPos = [-12167030 / 10000000, 445900820 / 10000000]; // Dune du Pilat
-var myGpsPos = [179831380 / 10000000, 1221878030 / 10000000]; // Les Philippines
+//var myGpsPos = [179831380 / 10000000, 1221878030 / 10000000]; // Les Philippines
 //var myGpsPos = [80000000 / 10000000, -300000000 / 10000000]; // Ocean
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2Rlc2ltZXVyIiwiYSI6ImNpbTBqa2UyNzAwazN1am00aXAzd2xtM3cifQ.bEyYhAJQrLRWFaIG6iFbCw';
 var map = new mapboxgl.Map({
@@ -101,7 +101,7 @@ function moveTo (gpsPos){
 	lineData.geometry.coordinates.push([gpsPos.lng,gpsPos.lat]);
 	map.getSource('route').setData(lineData);
 	var server = document.getElementById('serverstring').value;
-	var url = server +  "/tracking/put.php?lat=" + Math.round(gpsPos.lat*10000000) + "&lon=" + Math.round(gpsPos.lng*10000000) + "&alt=" + h;
+	var url = server +  "/tracking/put.php?lat=" + gpsPos.lat + "&lon=" + gpsPos.lng + "&alt=" + h;
 	if (window.XMLHttpRequest) {
 		requete = new XMLHttpRequest();
 	} else if (window.ActiveXObject) {
@@ -139,8 +139,8 @@ function changeDeltaVV () {
 
 function changeVV () {
 	vv += dvv;
-	if (vv > 5) vh = 5;
-	if (vv < -5) vh = -5;
+	if (vv > 5) vv = 5;
+	if (vv < -5) vv = -5;
 }
 
 function changeAlt () {

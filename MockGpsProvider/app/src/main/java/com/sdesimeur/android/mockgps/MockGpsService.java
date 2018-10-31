@@ -45,6 +45,7 @@ public class MockGpsService extends Service implements LocationListener {
 	private Pattern compiledPattern = null;
 	private double lat = 49.59266;
 	private double lon = 3.65649;
+	private double alt = 150;
 	//private int nbretrywithcancel;
 	private boolean mustBeAborted;
 	private boolean allreadySend = false;
@@ -65,7 +66,7 @@ public class MockGpsService extends Service implements LocationListener {
 	}
 
 	public MockGpsService() {
-		this.pattern = "lat\\s*\\=\\s*(\\-?\\d*\\.?\\d*)\\s*,\\s*lon\\s*\\=\\s*(\\-?\\d*\\.?\\d*)";
+		this.pattern = "lat\\s*\\=\\s*(\\-?\\d*\\.?\\d*)\\s*,\\s*lon\\s*\\=\\s*(\\-?\\d*\\.?\\d*)\\s*,\\s*alt\\s*\\=\\s*(\\-?\\d*\\.?\\d*)";
 		this.compiledPattern = Pattern.compile(this.pattern);
 		if (android.os.Build.VERSION.SDK_INT > 9) {
 			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -78,7 +79,7 @@ public class MockGpsService extends Service implements LocationListener {
 		newLocation = new Location(LocationManager.GPS_PROVIDER);
 		newLocation.setLatitude(lat);
 		newLocation.setLongitude(lon);
-		newLocation.setAltitude(100);
+		newLocation.setAltitude(alt);
 		newLocation.setBearing((float) angle);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			newLocation.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
@@ -154,6 +155,7 @@ public class MockGpsService extends Service implements LocationListener {
 					if (m.find()) {
 						lat = Double.parseDouble(m.group(1));
 						lon = Double.parseDouble(m.group(2));
+						alt = Double.parseDouble(m.group(3));
 						if ((newLocation == null) || (lat != newLocation.getLatitude()) || (lon != newLocation.getLongitude())) {
 							if (newLocation != null) {
 								double x = lat - newLocation.getLatitude();
