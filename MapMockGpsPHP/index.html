@@ -13,7 +13,17 @@
 <script src='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
 <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
 ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><BR>
-<div id="map" style="width: 800px; height: 600px"></div>
+<table><tr>
+<td><div id="map" style="width: 800px; height: 600px"></div></td>
+
+<td>Latitude : <span id="latitude"></span><br>
+Longitude : <span id="longitude"></span><br><br><br>
+Altitude : <span id="altireelle"></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="0" max="5000" onchange="changeAlti()">
+&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="100" min="0" max="5000">
+&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimax" id="altimax" step="10" value="2500" min="400" max="5000"></td>
+
+</tr><table>
 <script>
 document.getElementById('serverstring').value = window.location.href;
 var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
@@ -34,6 +44,11 @@ var map = new mapboxgl.Map({
 });
 
 map.addControl(new mapboxgl.NavigationControl());
+var scale = new mapboxgl.ScaleControl({
+    maxWidth: 80,
+    unit: 'metric'
+});
+map.addControl(scale);
 map.addControl(new MapboxGeocoder({
     accessToken: mapboxgl.accessToken
 }));
@@ -113,7 +128,7 @@ function moveTo (gpsPos){
 
 function onMapClick(e) {
 	a = Math.atan((e.lngLat.lng-myGpsPos[0])/(e.lngLat.lat-myGpsPos[1]))*180/Math.PI;
-	if ((e.lngLat.lat-myGpsPos[1])<0) a = 180 - a;
+	if ((e.lngLat.lat-myGpsPos[1])<0) a = 180 + a;
 	myGpsPos = [e.lngLat.lng, e.lngLat.lat];
 	moveTo(e.lngLat);
 }
@@ -143,10 +158,22 @@ function changeVV () {
 	if (vv < -5) vv = -5;
 }
 
+function changeAlti () {
+	var hmax = parseInt(document.getElementById('altimax').value);
+	var hmin = parseInt(document.getElementById('altimin').value);
+	h = parseInt(document.getElementById('alti').value);
+	if (h > hmax) h = hmax;
+	if (h < hmin) h = hmin;
+}
+
+
 function changeAlt () {
+	var hmax = parseInt(document.getElementById('altimax').value);
+	var hmin = parseInt(document.getElementById('altimin').value);
 	h += vv * dt / 1000;
-	if (h > 2500) h = 2500;
-	if (h < 500) h = 500;
+	if (h > hmax) h = hmax;
+	if (h < hmin) h = hmin;
+	document.getElementById('altireelle').textContent=h;
 }
 
 function changeGpsPos () {
@@ -165,6 +192,9 @@ function changeGpsPos () {
 	
 	myGpsPos[1] += (dy / 111500);
 	myGpsPos[0] += (dx / 75000);
+	
+	document.getElementById('latitude').textContent=myGpsPos[1];
+	document.getElementById('longitude').textContent=myGpsPos[0];
 	
 	moveTo (new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
 }
