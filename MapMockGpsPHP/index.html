@@ -4,15 +4,21 @@
 <title>Leaflet Quick Start Guide Example</title>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--<script type="text/javascript" src="./jquery-1.7.2.min.js"></script>-->
+<!-- Latest patch release -->
+<script src="https://cdn.airmap.io/js/contextual-airspace/1.0.0/airmap.contextual-airspace-plugin.min.js"></script>
+
+<!-- Latest minor release -->
+<script src="https://cdn.airmap.io/js/contextual-airspace/v1.0/airmap.contextual-airspace-plugin.min.js"></script>
+<!-- <script src="https://cdn.airmap.io/js/contextual-airspace/v1.0/airmap.contextual-airspace-plugin.min.js" async=false defer=false></script> -->
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
 <link rel="stylesheet" href="perso.css" />
 </head>
 <body>
-<!--<script type="text/javascript" src="./jquery-1.7.2.min.js"></script>-->
-<script src='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
-<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
-ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><BR>
+ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><BR>    
 <table><tr>
 <td><div id="map" style="width: 800px; height: 600px"></div></td>
 
@@ -25,6 +31,9 @@ Altitude : <span id="altireelle"></span><br>
 
 </tr><table>
 <script>
+const AIRMAP_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHw5d2U0Tm9LSDhnWk41QklBa0o3bmxUNVpEOWEzIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnw5NWRBb3BwaTNhRzk1b3RCOG9PQk5GTGFPbHY1Iiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfDRYNmFxTm9jWDc2bTVsQ0psNFliYmhOdnBLV0ciLCJpYXQiOjE1NDI4NzE5NTB9.6hWBz_QiDWeT4bPE869CSUH4d_FMp6cFHHiauLtlBts';
+const AIRMAP_CLIENT_ID = 'V5gcZpnHW7A48KD8S9C3AGm3IU2SbfPm';
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1Ijoic2Rlc2ltZXVyIiwiYSI6ImNpbTBqa2UyNzAwazN1am00aXAzd2xtM3cifQ.bEyYhAJQrLRWFaIG6iFbCw';
 document.getElementById('serverstring').value = window.location.href;
 var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
 //var myGpsPos = [35608193 / 10000000, 487255027 / 10000000]; // QG
@@ -33,15 +42,68 @@ var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
 //var myGpsPos = [-12167030 / 10000000, 445900820 / 10000000]; // Dune du Pilat
 //var myGpsPos = [179831380 / 10000000, 1221878030 / 10000000]; // Les Philippines
 //var myGpsPos = [80000000 / 10000000, -300000000 / 10000000]; // Ocean
-mapboxgl.accessToken = 'pk.eyJ1Ijoic2Rlc2ltZXVyIiwiYSI6ImNpbTBqa2UyNzAwazN1am00aXAzd2xtM3cifQ.bEyYhAJQrLRWFaIG6iFbCw';
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 var map = new mapboxgl.Map({
 	container: 'map',
-	style: 'mapbox://styles/mapbox/outdoors-v9',
+	style: 'mapbox://styles/mapbox/streets-v8',
+//	style: 'mapbox://styles/mapbox/outdoors-v9',
 	zoom: 15,
 	transition: {"duration": 0, "delay": 0},
 	fadeDuration: 0,
 	center: myGpsPos
 });
+
+const config = {
+    "airmap": {
+        "api_key": AIRMAP_API_KEY
+    },
+    "auth0": {
+        "client_id": AIRMAP_CLIENT_ID,
+        "callback_url": null
+    },
+    "mapbox": {
+	"access_token": MAPBOX_ACCESS_TOKEN
+    }
+};
+const options = {
+                    preferredRulesets: [
+                        'fra_common',
+                        'fra_airmap_rules',
+						'fra_rec_rules',
+						'fra_notam',
+						'fra_comm_s1_rules',
+						'fra_comm_s2_rules',
+						'fra_comm_s3_rules',
+						'fra_comm_s4_rules',
+						'fra_restricted'
+                    ],
+                    overrideRulesets: [
+                        // 'usa_part_107'
+                    ],
+                    enableRecommendedRulesets: true,
+                    theme: 'standard'
+                    /* refer to the docs for a comprehensive list of options */
+                };
+const plugin = new AirMap.ContextualAirspacePlugin(config, options);
+plugin.on('jurisdictionChange', (data) => console.log('jurisdictionChange', data));
+plugin.on('airspaceLayerClick', (data) => console.log('airspaceLayerClick', data));
+                
+map.addControl(plugin, 'top-left')
+setTimeout(() => {
+                    console.log({
+                        jurisdictions: plugin.getJurisdictions(),
+                        selectedRulelsets: plugin.getSelectedRulesets()
+                    })
+                }, 5000);
+/*var map = new Airmap.Map(config, {
+  container: 'map',
+  layers: ['airports_recreational'],
+  style: 'https://api.airmap.io/maps/v4/tilejson/airports_recreational,class_b?apikey='+apiKey+'&token='+clientId+'&theme=standard',
+	zoom: 15,
+	transition: {"duration": 0, "delay": 0},
+	fadeDuration: 0,
+	center: myGpsPos
+});*/
 
 map.addControl(new mapboxgl.NavigationControl());
 var scale = new mapboxgl.ScaleControl({
