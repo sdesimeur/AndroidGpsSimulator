@@ -23,11 +23,12 @@ ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><
 <td><div id="map" style="width: 800px; height: 600px"></div></td>
 
 <td>Latitude : <span id="latitude"></span><br>
-Longitude : <span id="longitude"></span><br><br><br>
+Longitude : <span id="longitude"></span><br>
+Direction : <span id="direction"></span><br><br><br>
 Altitude : <span id="altireelle"></span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="0" max="5000" onchange="changeAlti()">
-&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="100" min="0" max="5000">
-&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimax" id="altimax" step="10" value="2500" min="400" max="5000"></td>
+&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="100" min="0" max="9000">
+&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimax" id="altimax" step="10" value="7000" min="400" max="10000"></td>
 
 </tr><table>
 <script>
@@ -45,9 +46,9 @@ var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 var map = new mapboxgl.Map({
 	container: 'map',
-	style: 'mapbox://styles/mapbox/streets-v8',
-//	style: 'mapbox://styles/mapbox/outdoors-v9',
-	zoom: 15,
+//	style: 'mapbox://styles/mapbox/streets-v8',
+	style: 'mapbox://styles/mapbox/outdoors-v9',
+	zoom: 10,
 	transition: {"duration": 0, "delay": 0},
 	fadeDuration: 0,
 	center: myGpsPos
@@ -67,21 +68,29 @@ const config = {
 };
 const options = {
                     preferredRulesets: [
-                        'fra_common',
-                        'fra_airmap_rules',
-						'fra_rec_rules',
 						'fra_notam',
 						'fra_comm_s1_rules',
 						'fra_comm_s2_rules',
 						'fra_comm_s3_rules',
 						'fra_comm_s4_rules',
-						'fra_restricted'
+						'fra_restricted',
+                        'fra_common',
+                        'fra_airmap_rules',
+						'fra_rec_rules'
                     ],
                     overrideRulesets: [
-                        // 'usa_part_107'
+						'fra_notam',
+						'fra_comm_s1_rules',
+						'fra_comm_s2_rules',
+						'fra_comm_s3_rules',
+						'fra_comm_s4_rules',
+						'fra_restricted',
+                        'fra_common',
+                        'fra_airmap_rules',
+						'fra_rec_rules'
                     ],
                     enableRecommendedRulesets: true,
-                    theme: 'standard'
+                    theme: 'light'
                     /* refer to the docs for a comprehensive list of options */
                 };
 const plugin = new AirMap.ContextualAirspacePlugin(config, options);
@@ -89,12 +98,7 @@ plugin.on('jurisdictionChange', (data) => console.log('jurisdictionChange', data
 plugin.on('airspaceLayerClick', (data) => console.log('airspaceLayerClick', data));
                 
 map.addControl(plugin, 'top-left')
-setTimeout(() => {
-                    console.log({
-                        jurisdictions: plugin.getJurisdictions(),
-                        selectedRulelsets: plugin.getSelectedRulesets()
-                    })
-                }, 5000);
+
 /*var map = new Airmap.Map(config, {
   container: 'map',
   layers: ['airports_recreational'],
@@ -191,11 +195,12 @@ function moveTo (gpsPos){
 function onMapClick(e) {
 	a = Math.atan((e.lngLat.lng-myGpsPos[0])/(e.lngLat.lat-myGpsPos[1]))*180/Math.PI;
 	if ((e.lngLat.lat-myGpsPos[1])<0) a = 180 + a;
+	a=Math.round(a);
 	myGpsPos = [e.lngLat.lng, e.lngLat.lat];
 	moveTo(e.lngLat);
 }
 function changeDeltaAngle () {
-	da = (Math.random()*2-1);
+	da = (Math.random()*4-2);
 	var tm = window.setInterval(changeAngle, dt);
 	window.setTimeout(function (){
 		window.clearInterval(tm);
@@ -204,7 +209,9 @@ function changeDeltaAngle () {
 
 function changeAngle() {
 	a += da;
+	a=Math.round(a);
 	while (a < 0) a += 360;
+	a=Math.round(a);
 	a %= 360;
 }
 
@@ -233,9 +240,9 @@ function changeAlt () {
 	var hmax = parseInt(document.getElementById('altimax').value);
 	var hmin = parseInt(document.getElementById('altimin').value);
 	h += vv * dt / 1000;
+	h = Math.round(h);
 	if (h > hmax) h = hmax;
 	if (h < hmin) h = hmin;
-	document.getElementById('altireelle').textContent=h;
 }
 
 function changeGpsPos () {
@@ -257,7 +264,9 @@ function changeGpsPos () {
 	
 	document.getElementById('latitude').textContent=myGpsPos[1];
 	document.getElementById('longitude').textContent=myGpsPos[0];
-	
+	document.getElementById('direction').textContent=a;
+	document.getElementById('altireelle').innerHTML=h + " m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + Math.round(h * 3.28) + " ft";
+
 	moveTo (new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
 }
 
@@ -277,7 +286,18 @@ map.on('load', function () {
 	window.setInterval(changeDeltaVV, dt);
 	window.setInterval(changeVV, dt);
 	window.setInterval(changeAlt, dt);
-	
+	setTimeout(() => {
+                    console.log({
+                        jurisdictions: plugin.getJurisdictions(),
+                        selectedRulelsets: plugin.getSelectedRulesets()
+                    })
+                }, 5000);
+    /*setInterval(() => {
+                    console.log({
+                        jurisdictions: plugin.getJurisdictions(),
+                        selectedRulelsets: plugin.getSelectedRulesets()
+                    })
+                }, 10000);*/
 });
 map.on('click', onMapClick);
 document.getElementById('map').style.cursor = '';
