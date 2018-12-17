@@ -9,7 +9,7 @@
 <script src="https://cdn.airmap.io/js/contextual-airspace/1.0.0/airmap.contextual-airspace-plugin.min.js"></script>
 
 <!-- Latest minor release -->
-<script src="https://cdn.airmap.io/js/contextual-airspace/v1.0/airmap.contextual-airspace-plugin.min.js"></script>
+<script src="https://cdn.airmap.io/js/contextual-airspace/v1.0/airmap.contextual-airspace-plugin.min.js" async=false defer=false></script>
 <!-- <script src="https://cdn.airmap.io/js/contextual-airspace/v1.0/airmap.contextual-airspace-plugin.min.js" async=false defer=false></script> -->
 <script src='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
 <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
@@ -20,20 +20,21 @@
 <body>
 ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><BR>    
 <table><tr>
-<td><div id="map" style="width: 800px; height: 600px"></div></td>
+<td><div id="map" style="width: 800px; height: 800px"></div></td>
 
 <td>Latitude : <span id="latitude"></span><br>
 Longitude : <span id="longitude"></span><br>
 Direction : <span id="direction"></span><br><br><br>
 Altitude : <span id="altireelle"></span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="0" max="5000" onchange="changeAlti()">
-&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="100" min="0" max="9000">
-&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimax" id="altimax" step="10" value="7000" min="400" max="10000"></td>
+&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="-500" min="-1000" max="20000">
+&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimax" id="altimax" step="10" value="25000" min="-500" max="25000">
+<br><br><br>
+<input type="button" value="center" onclick="centerOnMap()">
+</td>
 
 </tr><table>
 <script>
-const AIRMAP_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHw5d2U0Tm9LSDhnWk41QklBa0o3bmxUNVpEOWEzIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnw5NWRBb3BwaTNhRzk1b3RCOG9PQk5GTGFPbHY1Iiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfDRYNmFxTm9jWDc2bTVsQ0psNFliYmhOdnBLV0ciLCJpYXQiOjE1NDI4NzE5NTB9.6hWBz_QiDWeT4bPE869CSUH4d_FMp6cFHHiauLtlBts';
-const AIRMAP_CLIENT_ID = 'V5gcZpnHW7A48KD8S9C3AGm3IU2SbfPm';
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1Ijoic2Rlc2ltZXVyIiwiYSI6ImNpbTBqa2UyNzAwazN1am00aXAzd2xtM3cifQ.bEyYhAJQrLRWFaIG6iFbCw';
 document.getElementById('serverstring').value = window.location.href;
 var myGpsPos = [36564900 / 10000000, 495926600 / 10000000]; // home
@@ -53,33 +54,32 @@ var map = new mapboxgl.Map({
 	fadeDuration: 0,
 	center: myGpsPos
 });
-
 const config = {
     "airmap": {
-        "api_key": AIRMAP_API_KEY
+        "api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHw5d2U0Tm9LSDhnWk41QklBa0o3bmxUNVpEOWEzIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnw5NWRBb3BwaTNhRzk1b3RCOG9PQk5GTGFPbHY1Iiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfDRYNmFxTm9jWDc2bTVsQ0psNFliYmhOdnBLV0ciLCJpYXQiOjE1NDI4NzE5NTB9.6hWBz_QiDWeT4bPE869CSUH4d_FMp6cFHHiauLtlBts"
     },
     "auth0": {
-        "client_id": AIRMAP_CLIENT_ID,
+        "client_id": "V5gcZpnHW7A48KD8S9C3AGm3IU2SbfPm",
         "callback_url": null
     },
     "mapbox": {
 	"access_token": MAPBOX_ACCESS_TOKEN
     }
-};
+}
 const options = {
                     preferredRulesets: [
 						'fra_notam',
-						'fra_comm_s1_rules',
-						'fra_comm_s2_rules',
-						'fra_comm_s3_rules',
-						'fra_comm_s4_rules',
+						//'fra_comm_s1_rules',
+						//'fra_comm_s2_rules',
+						//'fra_comm_s3_rules',
+						//'fra_comm_s4_rules',
 						'fra_restricted',
                         'fra_common',
-                        'fra_airmap_rules',
-						'fra_rec_rules'
+                        'fra_airmap_rules'
+						//'fra_rec_rules'
                     ],
                     overrideRulesets: [
-						'fra_notam',
+						/*'fra_notam',
 						'fra_comm_s1_rules',
 						'fra_comm_s2_rules',
 						'fra_comm_s3_rules',
@@ -87,7 +87,7 @@ const options = {
 						'fra_restricted',
                         'fra_common',
                         'fra_airmap_rules',
-						'fra_rec_rules'
+						'fra_rec_rules'*/
                     ],
                     enableRecommendedRulesets: true,
                     theme: 'light'
@@ -97,7 +97,6 @@ const plugin = new AirMap.ContextualAirspacePlugin(config, options);
 plugin.on('jurisdictionChange', (data) => console.log('jurisdictionChange', data));
 plugin.on('airspaceLayerClick', (data) => console.log('airspaceLayerClick', data));
                 
-map.addControl(plugin, 'top-left')
 
 /*var map = new Airmap.Map(config, {
   container: 'map',
@@ -109,15 +108,11 @@ map.addControl(plugin, 'top-left')
 	center: myGpsPos
 });*/
 
-map.addControl(new mapboxgl.NavigationControl());
 var scale = new mapboxgl.ScaleControl({
     maxWidth: 80,
     unit: 'metric'
 });
-map.addControl(scale);
-map.addControl(new MapboxGeocoder({
-    accessToken: mapboxgl.accessToken
-}));
+
 var iconData = {
                 "type": "Feature",
                 "properties": {},
@@ -176,7 +171,7 @@ var dvh = 0; // par seconde
 var dt = 500;
 
 function moveTo (gpsPos){
-	map.panTo(gpsPos);
+	//map.panTo(gpsPos);
 	iconData.geometry.coordinates=[gpsPos.lng,gpsPos.lat];
 	map.getSource('para').setData(iconData);
 	lineData.geometry.coordinates.push([gpsPos.lng,gpsPos.lat]);
@@ -198,6 +193,9 @@ function onMapClick(e) {
 	a=Math.round(a);
 	myGpsPos = [e.lngLat.lng, e.lngLat.lat];
 	moveTo(e.lngLat);
+}
+function centerOnMap() {
+		map.panTo(new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
 }
 function changeDeltaAngle () {
 	da = (Math.random()*4-2);
@@ -270,6 +268,12 @@ function changeGpsPos () {
 	moveTo (new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
 }
 
+map.addControl(new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken
+}));
+map.addControl(scale);
+map.addControl(new mapboxgl.NavigationControl());
+map.addControl(plugin, 'top-left')
 
 map.on('load', function () {
 	map.loadImage('para_icon.png', function (error, image){
