@@ -177,7 +177,8 @@ function moveTo (gpsPos){
 	lineData.geometry.coordinates.push([gpsPos.lng,gpsPos.lat]);
 	map.getSource('route').setData(lineData);
 	var server = document.getElementById('serverstring').value;
-	var url = server +  "/tracking/put.php?lat=" + gpsPos.lat + "&lon=" + gpsPos.lng + "&alt=" + h;
+	var mydate = new Date();
+	var url = server +  "/tracking/put.php?lat=" + gpsPos.lat + "&lon=" + gpsPos.lng + "&alt=" + h + "&time=" + Math.round(mydate.getTime() / 1000);
 	if (window.XMLHttpRequest) {
 		requete = new XMLHttpRequest();
 	} else if (window.ActiveXObject) {

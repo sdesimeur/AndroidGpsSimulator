@@ -2,11 +2,12 @@
 $lon=$_GET['lon'];
 $lat=$_GET['lat'];
 $alt=$_GET['alt'];
+$mytime=$_GET['time'];
 $file="./files/coord_tmp.txt";
-$txt="lat=".$lat . ",lon=" . $lon . ",alt=" . $alt;
+$txt="lat=".$lat . ",lon=" . $lon . ",alt=" . $alt . ",time=". $mytime;
 $size = file_put_contents($file,$txt,LOCK_EX);
 rename($file, "./files/coord.txt");
-//$binarydata = sprintf("%08X%08X%08X", $lat, $lon, $alt);
+//$binarydata = sprintf("%08X%08X%08X%08X", $lat, $lon, $alt, $mytime);
 $lat = round($lat*10000000);
 $lon = round($lon*10000000);
 $alt = round($alt);
