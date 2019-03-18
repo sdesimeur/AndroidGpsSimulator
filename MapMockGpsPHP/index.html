@@ -26,9 +26,14 @@ ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><
 Longitude : <span id="longitude"></span><br>
 Direction : <span id="direction"></span><br><br><br>
 Altitude : <span id="altireelle"></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="0" max="5000" onchange="changeAlti()">
-&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="-500" min="-1000" max="20000">
-&nbsp;&nbsp;&nbsp;&nbsp;Altitude Min: <input type="number" name="altimax" id="altimax" step="10" value="25000" min="-500" max="25000">
+Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="0" max="5000" onchange="changeAlti()"><br>
+Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="-500" min="-1000" max="20000"><br>
+Altitude Max: <input type="number" name="altimax" id="altimax" step="10" value="25000" min="-500" max="25000"><br>
+<br>
+Vitesse : <span id="vitessereelle"></span><br>
+Nouvelle vitesse : <input type="number" name="vitesse" id="vitesse" step="1" value="10" min="0" max="150" onchange="changeVitesse()"><br>
+Vitesse Min: <input type="number" name="vitessemin" id="vitessemin" step="1" value="5" min="0" max="140"><br>
+Vitesse Max: <input type="number" name="vitessemax" id="vitessemax" step="1" value="15" min="10" max="150"><br>
 <br><br><br>
 <input type="button" value="center" onclick="centerOnMap()">
 </td>
@@ -234,6 +239,14 @@ function changeAlti () {
 	if (h < hmin) h = hmin;
 }
 
+function changeVitesse () {
+	var vhmax = parseInt(document.getElementById('vitessemax').value);
+	var vhmin = parseInt(document.getElementById('vitessemin').value);
+	vh = parseInt(document.getElementById('vitesse').value);
+	if (vh > vhmax) vh = vhmax;
+	if (vh < vhmin) vh = vhmin;
+}
+
 
 function changeAlt () {
 	var hmax = parseInt(document.getElementById('altimax').value);
@@ -245,13 +258,15 @@ function changeAlt () {
 }
 
 function changeGpsPos () {
+	var vhmax = parseInt(document.getElementById('vitessemax').value);
+	var vhmin = parseInt(document.getElementById('vitessemin').value);
 	dvh += (Math.random()*2-1);
 	if (dvh < -5) dvh = -5;
 	if (dvh > 5) dvh = 5;
 
 	vh += dvh * dt / 1000;
-	if (vh > 15) vh = 15;
-	if (vh < 5) vh = 5;
+	if (vh > vhmax) vh = vhmax;
+	if (vh < vhmin) vh = vhmin;
 
 	var dd = vh * dt / 1000;
 	var ad = a * Math.PI / 180;
@@ -264,6 +279,7 @@ function changeGpsPos () {
 	document.getElementById('latitude').textContent=myGpsPos[1];
 	document.getElementById('longitude').textContent=myGpsPos[0];
 	document.getElementById('direction').textContent=a;
+	document.getElementById('vitessereelle').textContent=vh;
 	document.getElementById('altireelle').innerHTML=h + " m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + Math.round(h * 3.28) + " ft";
 
 	moveTo (new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
