@@ -22,18 +22,22 @@ ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><
 <table><tr>
 <td><div id="map" style="width: 800px; height: 800px"></div></td>
 
-<td>Latitude : <span id="latitude"></span><br>
+<td>
+
+Latitude : <span id="latitude"></span><br>
 Longitude : <span id="longitude"></span><br>
+Nouvelle latitude : <input type="number" name="newlat" id="newlat" step="0.00001" value="49.59266" min="-90" max="90" onchange="changeLat()"><br>
+Nouvelle longitude : <input type="number" name="newlng" id="newlng" step="0.00001" value="3.65649" min="-180" max="180" onchange="changeLng()"><br>
 Direction : <span id="direction"></span><br><br><br>
 Altitude : <span id="altireelle"></span><br>
 Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="0" max="5000" onchange="changeAlti()"><br>
-Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="-500" min="-1000" max="20000"><br>
+Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="000" min="-1000" max="20000"><br>
 Altitude Max: <input type="number" name="altimax" id="altimax" step="10" value="25000" min="-500" max="25000"><br>
 <br>
 Vitesse : <span id="vitessereelle"></span><br>
 Nouvelle vitesse : <input type="number" name="vitesse" id="vitesse" step="1" value="10" min="0" max="150" onchange="changeVitesse()"><br>
-Vitesse Min: <input type="number" name="vitessemin" id="vitessemin" step="1" value="5" min="0" max="140"><br>
-Vitesse Max: <input type="number" name="vitessemax" id="vitessemax" step="1" value="15" min="10" max="150"><br>
+Vitesse Min: <input type="number" name="vitessemin" id="vitessemin" step="1" value="5" min="0" max="150"><br>
+Vitesse Max: <input type="number" name="vitessemax" id="vitessemax" step="1" value="15" min="0" max="150"><br>
 <br><br><br>
 <input type="button" value="center" onclick="centerOnMap()">
 </td>
@@ -255,6 +259,18 @@ function changeAlt () {
 	h = Math.round(h);
 	if (h > hmax) h = hmax;
 	if (h < hmin) h = hmin;
+}
+
+function changeLat () {
+	 myGpsPos[1] = parseFloat(document.getElementById('newlat').value);
+	 document.getElementById('latitude').textContent=myGpsPos[1];
+	 moveTo (new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
+}
+
+function changeLng () {
+	myGpsPos[0] = parseFloat(document.getElementById('newlng').value);
+	document.getElementById('longitude').textContent=myGpsPos[0];
+	moveTo (new mapboxgl.LngLat(myGpsPos[0],myGpsPos[1]));
 }
 
 function changeGpsPos () {
