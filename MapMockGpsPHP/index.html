@@ -189,7 +189,7 @@ function moveTo (gpsPos){
 	var mydate = new Date();
 	var url = server +  "/tracking/put.php" +
 		"?lat=" + gpsPos.lat +
-		"&lon=" + gpsPos.lng +
+		"&lng=" + gpsPos.lng +
 		"&alt=" + h +
 		"&time=" + Math.round(mydate.getTime() / 1000) +
 		"&spd=" + vh +
