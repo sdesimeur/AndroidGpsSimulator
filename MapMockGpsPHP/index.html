@@ -30,7 +30,7 @@ Nouvelle latitude : <input type="number" name="newlat" id="newlat" step="0.00001
 Nouvelle longitude : <input type="number" name="newlng" id="newlng" step="0.00001" value="3.65649" min="-180" max="180" onchange="changeLng()"><br>
 Direction : <span id="direction"></span><br><br><br>
 Altitude : <span id="altireelle"></span><br>
-Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="0" max="5000" onchange="changeAlti()"><br>
+Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="-1000" max="5000" onchange="changeAlti()"><br>
 Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="000" min="-1000" max="20000"><br>
 Altitude Max: <input type="number" name="altimax" id="altimax" step="10" value="25000" min="-500" max="25000"><br>
 <br>
@@ -177,7 +177,7 @@ var da = 0; // par seconde
 var dvv = 0; // par seconde
 var dvh = 0; // par seconde
 
-var dt = 500;
+var dt = 1000;
 
 function moveTo (gpsPos){
 	//map.panTo(gpsPos);
