@@ -23,21 +23,28 @@ ServerString : <INPUT TYPE=TEXT NAME='serverstring' ID='serverstring' SIZE=200><
 <td><div id="map" style="width: 800px; height: 800px"></div></td>
 
 <td>
-
+Coordonn&eacute;es pour Geoportail : <span id="coordonneesGeoportail"></span><br>
+Coordonn&eacute;es pour SysXLoader : <span id="coordonneesSysXLoader"></span><br>
 Latitude : <span id="latitude"></span><br>
 Longitude : <span id="longitude"></span><br>
 Nouvelle latitude : <input type="number" name="newlat" id="newlat" step="0.00001" value="49.59266" min="-90" max="90" onchange="changeLat()"><br>
 Nouvelle longitude : <input type="number" name="newlng" id="newlng" step="0.00001" value="3.65649" min="-180" max="180" onchange="changeLng()"><br>
-Direction : <span id="direction"></span><br><br><br>
+
+
+Direction Min: <input type="number" name="anglemin" id="anglemin" step="5" value="000" min="-300" max="360"><br>
+Direction Max: <input type="number" name="anglemax" id="anglemax" step="5" value="360" min="-360" max="360"><br>
+Direction : <span id="direction"></span><br>
+
+<br><br>
 Altitude : <span id="altireelle"></span><br>
 Nouvelle altitude : <input type="number" name="alti" id="alti" step="10" value="500" min="-1000" max="5000" onchange="changeAlti()"><br>
 Altitude Min: <input type="number" name="altimin" id="altimin" step="10" value="000" min="-1000" max="20000"><br>
 Altitude Max: <input type="number" name="altimax" id="altimax" step="10" value="25000" min="-500" max="25000"><br>
 <br>
 Vitesse : <span id="vitessereelle"></span><br>
-Nouvelle vitesse : <input type="number" name="vitesse" id="vitesse" step="1" value="10" min="0" max="150" onchange="changeVitesse()"><br>
-Vitesse Min: <input type="number" name="vitessemin" id="vitessemin" step="1" value="5" min="0" max="150"><br>
-Vitesse Max: <input type="number" name="vitessemax" id="vitessemax" step="1" value="15" min="0" max="150"><br>
+Nouvelle vitesse : <input type="number" name="vitesse" id="vitesse" step="1" value="25" min="0" max="150" onchange="changeVitesse()"><br>
+Vitesse Min: <input type="number" name="vitessemin" id="vitessemin" step="1" value="15" min="0" max="150"><br>
+Vitesse Max: <input type="number" name="vitessemax" id="vitessemax" step="1" value="45" min="0" max="150"><br>
 <br><br><br>
 <input type="button" value="center" onclick="centerOnMap()">
 </td>
@@ -227,6 +234,36 @@ function changeAngle() {
 	while (a < 0) a += 360;
 	a=Math.round(a);
 	a %= 360;
+	
+	var amax = parseInt(document.getElementById('anglemax').value);
+	var amin = parseInt(document.getElementById('anglemin').value);
+	
+	if (amax < amin){
+		var tmp = amax;
+		amax = amin;
+		amin = tmp;
+		document.getElementById('anglemax').value = amax;
+		document.getElementById('anglemin').value = amin;
+	}
+	
+	if (amin * amax >= 0) {
+		if (amax <= 0)
+		{
+			amax += 360;
+			amin += 360;
+		}
+		if (a > amax) {
+			a = amax;
+		} else if (a < amin) {
+			a = amin;
+		}
+	} else
+		if (a > amax) {
+			a = amax;
+		} else if (a < 0 && a < (amin + 360)) {
+			a = amin + 360;
+		}
+	}
 }
 
 function changeDeltaVV () {
@@ -300,6 +337,8 @@ function changeGpsPos () {
 	
 	document.getElementById('latitude').textContent=myGpsPos[1];
 	document.getElementById('longitude').textContent=myGpsPos[0];
+	document.getElementById('coordonneesGeoportail').textContent="Coordonnées : " + myGpsPos[1] + " " + myGpsPos[0];
+	document.getElementById('coordonneesSysXLoader').textContent="Coordonnées : " + Math.round(myGpsPos[1] * 10000000) + " " + Math.round(myGpsPos[0] * 10000000);
 	document.getElementById('direction').textContent=a;
 	document.getElementById('vitessereelle').textContent=vh;
 	document.getElementById('altireelle').innerHTML=h + " m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + Math.round(h * 3.28) + " ft";
