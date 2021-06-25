@@ -11,10 +11,15 @@ fi
 
 touch ${LOCKFILE}
 
-trap "rm ${LOCKFILE}" 2 3 
+trap "rm ${LOCKFILE}; umount ~/fuse/distant/; killall virtualFlight.sh" 2 3 
 
-FILE="$HOME/public_html/AndroidGpsSimulator/MapMockGpsPHP/tracking/files/coord.txt"
-FILEMAP="../Debug/SysNavXLMasterSTM32L552.map"
+FILE="$HOME/public_html/MapMockGpsPHP/tracking/files/coord.txt"
+
+mkdir -p ~/fuse/distant/
+
+sshfs vincent@pcvincent:"/Syride/SVN/dossier Vincent/Soft/SYS-Nav_XL_Branchs/SysNavXLMasterSTM32L552/"  ~/fuse/distant/
+
+FILEMAP="${HOME}/fuse/distant/Debug/SysNavXLMasterSTM32L552.map"
 
 export IFS=","
 
