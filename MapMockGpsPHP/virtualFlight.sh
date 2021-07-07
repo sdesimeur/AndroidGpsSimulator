@@ -20,6 +20,8 @@ FILE="$HOME/public_html/MapMockGpsPHP/tracking/files/coord.txt"
 mkdir -p ~/fuse/distant/
 
 #sshfs vincent@pcvincent:"/Syride/SVN/dossier Vincent/Soft/SYS-Nav_XL_Branchs/SysNavXLMasterSTM32L552/Debug"  ~/fuse/distant/
+ssh-keygen -f "/home/sam/.ssh/known_hosts" -R "[127.0.0.1]:60022"
+
 sshfs $2@$3:"$4"  ~/fuse/distant/
 
 FILEMAP="${HOME}/fuse/distant/$1"
