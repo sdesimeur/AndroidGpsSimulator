@@ -43,7 +43,8 @@ do
 	tmp=$(echo "${lng} * 10000000" | bc); lng=${tmp%.*}
 	tmp=$(echo "${spd} * 10" | bc); spd=${tmp%.*}
 	tmp=$(echo "${hdg}" | bc); hdg=${tmp%.*}
-	echo -e -n "mww $((${ADDR})) ${lat}\n" \
+	time=$(date +"%s")
+    echo -e -n "mww $((${ADDR})) ${lat}\n" \
 		"mww $((${ADDR} + 4)) ${lng}\n" \
 		"mww $((${ADDR} + 8)) ${time}\n" \
 		"mwh $((${ADDR} + 12)) ${alt}\n" \
