@@ -4,12 +4,8 @@
 <title>Leaflet Quick Start Guide Example</title>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--<script type="text/javascript" src="./jquery-1.7.2.min.js"></script>-->
+<script type="text/javascript" src="./secrets.js"></script>
 <!-- Latest patch release -->
-<script src="https://cdn.airmap.io/js/contextual-airspace/1.0.0/airmap.contextual-airspace-plugin.min.js"></script>
-
-<!-- Latest minor release -->
-<script src="https://cdn.airmap.io/js/contextual-airspace/v1.0/airmap.contextual-airspace-plugin.min.js" async=false defer=false></script>
 <!-- <script src="https://cdn.airmap.io/js/contextual-airspace/v1.0/airmap.contextual-airspace-plugin.min.js" async=false defer=false></script> -->
 <script src='https://api.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
 <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
@@ -69,18 +65,6 @@ var map = new mapboxgl.Map({
 	fadeDuration: 0,
 	center: myGpsPos
 });
-const config = {
-    "airmap": {
-        "api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsX2lkIjoiY3JlZGVudGlhbHw5d2U0Tm9LSDhnWk41QklBa0o3bmxUNVpEOWEzIiwiYXBwbGljYXRpb25faWQiOiJhcHBsaWNhdGlvbnw5NWRBb3BwaTNhRzk1b3RCOG9PQk5GTGFPbHY1Iiwib3JnYW5pemF0aW9uX2lkIjoiZGV2ZWxvcGVyfDRYNmFxTm9jWDc2bTVsQ0psNFliYmhOdnBLV0ciLCJpYXQiOjE1NDI4NzE5NTB9.6hWBz_QiDWeT4bPE869CSUH4d_FMp6cFHHiauLtlBts"
-    },
-    "auth0": {
-        "client_id": "V5gcZpnHW7A48KD8S9C3AGm3IU2SbfPm",
-        "callback_url": null
-    },
-    "mapbox": {
-	"access_token": MAPBOX_ACCESS_TOKEN
-    }
-}
 const options = {
                     preferredRulesets: [
 						'fra_notam',
