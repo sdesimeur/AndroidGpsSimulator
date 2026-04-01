@@ -92,10 +92,11 @@ const options = {
                     theme: 'light'
                     /* refer to the docs for a comprehensive list of options */
                 };
+/*
 const plugin = new AirMap.ContextualAirspacePlugin(config, options);
 plugin.on('jurisdictionChange', (data) => console.log('jurisdictionChange', data));
 plugin.on('airspaceLayerClick', (data) => console.log('airspaceLayerClick', data));
-                
+*/                
 
 /*var map = new Airmap.Map(config, {
   container: 'map',
@@ -334,7 +335,7 @@ map.addControl(new MapboxGeocoder({
 }));
 map.addControl(scale);
 map.addControl(new mapboxgl.NavigationControl());
-map.addControl(plugin, 'top-left')
+//map.addControl(plugin, 'top-left')
 
 map.on('load', function () {
 	map.loadImage('para_icon.png', function (error, image){
@@ -351,12 +352,14 @@ map.on('load', function () {
 	window.setInterval(changeDeltaVV, dt);
 	window.setInterval(changeVV, dt);
 	window.setInterval(changeAlt, dt);
+    /*
 	setTimeout(() => {
                     console.log({
                         jurisdictions: plugin.getJurisdictions(),
                         selectedRulelsets: plugin.getSelectedRulesets()
                     })
                 }, 5000);
+    */
     /*setInterval(() => {
                     console.log({
                         jurisdictions: plugin.getJurisdictions(),
